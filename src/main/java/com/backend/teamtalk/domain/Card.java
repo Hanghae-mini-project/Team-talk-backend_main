@@ -3,6 +3,9 @@ package com.backend.teamtalk.domain;
 import com.backend.teamtalk.dto.CardDescriptionDto;
 import com.backend.teamtalk.dto.CardRequestDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +14,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")    //빠뜨리니까 디비에는 저장 되는데 조회 할 때 빈 문자로 나옴
 @NoArgsConstructor
 @Getter
 @Setter
@@ -26,8 +31,9 @@ public class Card {
     @Column(nullable = true)
     private String description;
 
-    @OneToMany
+    @OneToMany(mappedBy = "card")
     @Column(nullable = true)
+    @JsonIgnore // 처음 조회 때 보드->핀->카드 만 보여주면 되지 카드 안의 커멘트들 까지 보여줄 필요는 없으니까
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne

@@ -86,13 +86,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api").permitAll()
 
                 //test:
-                //로그인 한 회원의 보드, 핀, 카드 읽기 (get 요청)
+                //로그인 한 회원의 보드, 핀, 카드 읽기 (get 요청), 추가: 코멘트
                 .antMatchers("/main/{username}").permitAll()
                 .antMatchers("/api/boards/{board_id}").permitAll()
                 .antMatchers("/api/pins/{pin_id}").permitAll()
                 .antMatchers("/api/pins").permitAll()
                 .antMatchers("/api/cards").permitAll()
                 .antMatchers("/api/cards/{card_id}").permitAll()
+                .antMatchers("/cards/{card_id}/comments").permitAll()
 
                 //board 생성, 수정, 삭제 : 회원만 (우선은)
                 .antMatchers(HttpMethod.POST, "/api/boards").hasRole("USER")
@@ -108,6 +109,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/cards/{pin_id}").hasRole("USER")
                 .antMatchers(HttpMethod.PUT, "/api/cards/{card_id}").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/api/cards/{card_id}").hasRole("USER")
+
+                //comment 생성, 수정, 삭제: 회원만
+                .antMatchers(HttpMethod.POST, "/cards/{card_id}/comments").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, "/cards/{card_id}/comments/{comment_id}").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, "/cards/{card_id}/comments/{comment_id}").hasRole("USER")
 
 
 
