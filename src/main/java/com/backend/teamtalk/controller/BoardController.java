@@ -40,7 +40,7 @@ public class BoardController {
 //    }
 
     //get all boards (순환참조 막기)  --> Success
-    //로그인 한 회원의 보드 가져오기
+    //로그인 한 회원의 보드 가져오기 -> 사실 보드 타이틀, 아이디만 있으면 되기 때문에 board 에서 comment 는 ignore 처리 해놨음
     @GetMapping("/main/{username}")    //username 이 넘어올 수도 있음
     public Map<String, Object> getAllBoards(@PathVariable String username) {
         Map<String, Object> userInfo = boardService.getAllBoards(username);

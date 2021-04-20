@@ -93,7 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/pins").permitAll()
                 .antMatchers("/api/cards").permitAll()
                 .antMatchers("/api/cards/{card_id}").permitAll()
-                .antMatchers("/cards/{card_id}/comments").permitAll()
+                .antMatchers("/api/cards/{card_id}/comments").permitAll()
 
                 //board 생성, 수정, 삭제 : 회원만 (우선은)
                 .antMatchers(HttpMethod.POST, "/api/boards").hasRole("USER")
@@ -111,9 +111,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/cards/{card_id}").hasRole("USER")
 
                 //comment 생성, 수정, 삭제: 회원만
-                .antMatchers(HttpMethod.POST, "/cards/{card_id}/comments").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "/cards/{card_id}/comments/{comment_id}").hasRole("USER")
-                .antMatchers(HttpMethod.DELETE, "/cards/{card_id}/comments/{comment_id}").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/api/cards/{card_id}/comments").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, "/api/cards/{card_id}/comments/{comment_id}").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, "/api/cards/{card_id}/comments/{comment_id}").hasRole("USER")
 
 
 

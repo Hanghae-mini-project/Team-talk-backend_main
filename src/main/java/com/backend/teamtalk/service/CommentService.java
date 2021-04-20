@@ -72,7 +72,7 @@ public class CommentService {
     }
 
     //delete comment
-    public boolean deleteComment(Long card_id, Long comment_id, User principal) {
+    public Comment deleteComment(Long card_id, Long comment_id, User principal) {
         Card card = cardRepository.findById(card_id).orElseThrow(
                 () -> new IllegalArgumentException("There is no card.")
         );
@@ -86,10 +86,10 @@ public class CommentService {
 
         if (!comment.getUser().getId().equals(user.getId())) {
             //아 어떤 예외처리로 해야 하는 걸까? 이렇게 말고 예외 쓰고 싶은데
-            return false;
+            return null;
         } else {
             commentRepository.deleteById(comment_id);
-            return true;
+            return comment; //boolean 으로 하니까 삭제 메세지는 뜨는데 db 에서 삭제가 안된다.
         }
 
     }

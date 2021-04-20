@@ -30,12 +30,14 @@ public class CommentController {
         return "create comment: success";
     }
 
-    //comment written by user
+    //comment written by user (내가 쓴 댓글)
     @GetMapping("/cards/{card_id}/comments")
     public Map<String, Object> ReadComments(@PathVariable Long card_id,
                                             @AuthenticationPrincipal User principal) {
         return commentService.readComments(card_id, principal);
     }
+
+    //특정 카드에 달려있는 모든 코멘트 조회(인자에 유저 정보 없이)
 
     //update comment -> 누구나 다 조회 가능한 코멘트.
     @PutMapping("/cards/{card_id}/comments/{comment_id}")
@@ -45,7 +47,7 @@ public class CommentController {
                                 @AuthenticationPrincipal User principal) {
         commentService.updateComment(card_id, comment_id, requestDto, principal);
 
-        return "update card: success";
+        return "update comment: success";
     }
 
     //delete comment
@@ -55,6 +57,6 @@ public class CommentController {
                                 @AuthenticationPrincipal User principal) {
         commentService.deleteComment(card_id, comment_id, principal);
 
-        return "delete card: success";
+        return "delete comment: success";
     }
 }
