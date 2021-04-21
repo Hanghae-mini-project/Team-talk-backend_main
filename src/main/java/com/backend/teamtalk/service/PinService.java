@@ -5,7 +5,10 @@ import com.backend.teamtalk.domain.Pin;
 import com.backend.teamtalk.dto.PinRequestDto;
 import com.backend.teamtalk.repository.BoardRepository;
 import com.backend.teamtalk.repository.PinRepository;
+import com.backend.teamtalk.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +20,25 @@ public class PinService {
 
     private final PinRepository pinRepository;
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
 
+    //로그인 하지 않은 사람이 url 로 쳐서 직접 들어올 수 있을까?
     //create pin
-    public void createPin(Long board_id, PinRequestDto requestDto) {
-        //board 호출
-        Board board = boardRepository.findById(board_id)
-                .orElseThrow(IllegalArgumentException::new);
+    public void createPin(Long board_id, PinRequestDto requestDto, User principal) {
+        //user 호출
+        com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername()).orElseThrow(
+                () -> new IllegalArgumentException("There is nobody by that name.")
+        );
 
-        Pin pin = new Pin(requestDto, board);           //순서 확인 때문에 build 사용하는 건가?
+        //board 호출
+        Board board = boardRepository.findById(board_id).orElseThrow(
+                        () -> new IllegalArgumentException("There is no bulletin board.")
+        );
+
+        Pin pin = new Pin(requestDto, board);
         pinRepository.save(pin);
+
     }
 
 

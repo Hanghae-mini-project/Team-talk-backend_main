@@ -32,7 +32,7 @@ public class Pin {
     private List<Card> cards;
 
     @ManyToOne
-    @JsonBackReference  //순환 참조는 막았는데 보드 아이디는 안찍힌다. ㅠ_ㅜ -> 특정 핀 조회에 보드 아이디 반영
+    @JsonBackReference  //특정 핀 조회에 보드 아이디 반영
     private Board board;
 
 

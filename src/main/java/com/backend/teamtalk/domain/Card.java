@@ -31,7 +31,7 @@ public class Card {
     @Column(nullable = true)
     private String description;
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     @Column(nullable = true)
     @JsonIgnore // 처음 조회 때 보드->핀->카드 만 보여주면 되지 카드 안의 커멘트들 까지 보여줄 필요는 없으니까
     private List<Comment> comments = new ArrayList<>();

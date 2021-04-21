@@ -21,15 +21,6 @@ public class BoardController {
     private final BoardRepository boardRepository;
     private final BoardService boardService;
 
-    //show boards in main page (로그인 기능 구현했을 시 -> user_id를 가지고 들어옴)
-//    @GetMapping("/main")
-//    public Board getMain(Authentication authentication) {
-//        //로그인 아직 안만들어서 안됨.
-//        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-//        // userId꺼내서 로직 처리
-//
-//    }
-
 
     //get all boards
 //    @GetMapping("/api")
@@ -41,7 +32,7 @@ public class BoardController {
 
     //get all boards (순환참조 막기)  --> Success
     //로그인 한 회원의 보드 가져오기 -> 사실 보드 타이틀, 아이디만 있으면 되기 때문에 board 에서 comment 는 ignore 처리 해놨음
-    @GetMapping("/main/{username}")    //username 이 넘어올 수도 있음
+    @GetMapping("/main/{username}")     //개발자를 위한 api
     public Map<String, Object> getAllBoards(@PathVariable String username) {
         Map<String, Object> userInfo = boardService.getAllBoards(username);
         return userInfo;
@@ -56,20 +47,6 @@ public class BoardController {
     }
 
 
-    //create board
-//    @PostMapping("/api/boards")
-//    public String createBoard(@RequestBody BoardRequestDto requestDto) {
-//        boardService.createBoard(requestDto);
-//        return "create board: success.";
-//    }
-
-//    //로그인 기능 없이 보드 만들기
-//    @PostMapping("/api/boards")
-//    public String createBoard(@RequestBody BoardRequestDto requestDto) {
-//        boardService.createBoard(requestDto);
-//        return "create board: success.";
-//    }
-
     //create boards (login)
     @PostMapping("/api/boards")
     public String createBoard(@RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal User principal) {
@@ -80,14 +57,14 @@ public class BoardController {
 
     //update board (title)
     @PutMapping("/api/boards/{board_id}")
-    public String updateBoard(@PathVariable Long board_id, @RequestBody BoardRequestDto requestDto) {
-        boardService.updateBoard(board_id, requestDto);
+    public String updateBoard(@PathVariable Long board_id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal User principal) {
+        boardService.updateBoard(board_id, requestDto, principal);
         return "update board: success.";
     }
 
     @DeleteMapping("api/boards/{board_id}")
-    public String deleteBoard(@PathVariable Long board_id) {
-        boardService.deleteBoard(board_id);
+    public String deleteBoard(@PathVariable Long board_id, @AuthenticationPrincipal User principal) {
+        boardService.deleteBoard(board_id, principal);
         return "delete board: success.";
     }
 }

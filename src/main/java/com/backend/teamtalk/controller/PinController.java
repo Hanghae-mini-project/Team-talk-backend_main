@@ -6,6 +6,8 @@ import com.backend.teamtalk.dto.PinRequestDto;
 import com.backend.teamtalk.repository.PinRepository;
 import com.backend.teamtalk.service.PinService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -21,8 +23,8 @@ public class PinController {
 
     //create pin
     @PostMapping("/api/pins/{board_id}")
-    public String createPin(@PathVariable Long board_id, @RequestBody PinRequestDto requestDto) {
-        pinService.createPin(board_id, requestDto);
+    public String createPin(@PathVariable Long board_id, @RequestBody PinRequestDto requestDto, @AuthenticationPrincipal User principal) {
+        pinService.createPin(board_id, requestDto, principal);
 
         return "create pin: success.";
     }

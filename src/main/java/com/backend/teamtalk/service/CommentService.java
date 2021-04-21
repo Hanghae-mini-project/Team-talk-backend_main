@@ -32,21 +32,29 @@ public class CommentService {
         );
         com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("There is nobody by that name.")
-        );
+        ); //principal 에 점 찍는 순간 null 터지는데 그러면 이 에러까지 안오나? board 랑 비교
 
         Comment comment = new Comment(requestDto, card, user);
         commentRepository.save(comment);
 
     }
 
-    //comment written by user.
+    //특정 카드에 달려있는 댓글들 가져오기.
     public Map<String, Object> readComments(Long card_id, User principal) {
         Map<String, Object> commentInfo = new LinkedHashMap<>();
+
         com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername())
                 .orElseThrow(
                 () -> new IllegalArgumentException("nobody else...")
         );
-        List<Comment> comments = user.getComments();
+//        List<Comment> comments = user.getComments();
+
+        //카드에 달려있는 댓글들 가져오기
+        Card card = cardRepository.findById(card_id).orElseThrow(
+                () -> new IllegalArgumentException("There is no card.")
+        );      //3번 카드
+        List<Comment> comments = card.getComments();
+
 
         commentInfo.put("cardId", card_id);
         commentInfo.put("comments", comments);
@@ -55,20 +63,32 @@ public class CommentService {
         return commentInfo;
     }
 
+
+
     //update comment
-    @Transactional
-    public void updateComment(Long card_id, Long comment_id, CommentRequestDto requestDto, User principal) {
+    @Transactional          //반환 타입 고민해 볼 것
+    public Comment updateComment(Long card_id, Long comment_id, CommentRequestDto requestDto, User principal) {
         Card card = cardRepository.findById(card_id).orElseThrow(
                 () -> new IllegalArgumentException("There is no card.")
-        );
+        );  //에러가 흘러옴!!!
 
         Comment comment = commentRepository.findById(comment_id).orElseThrow(
-                () -> new IllegalArgumentException("nothing!")
-        );
+                () -> new IllegalArgumentException("There is no reply.")
+        ); //오, 테스트 성공!!!
         com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("There is nobody by that name.")
         );
-        comment.update(requestDto, user, card);
+
+        //코멘트를 수정하려는 유저와, 코멘트를 작성한 유저가 일치하는지
+        if (!comment.getUser().getId().equals(user.getId())) {
+            //아 어떤 예외처리로 해야 하는 걸까? 이렇게 말고 예외 쓰고 싶은데
+            return null;
+        } else {
+            comment.update(requestDto, user, card);
+            return comment;
+        }
+
+
     }
 
     //delete comment
@@ -84,6 +104,7 @@ public class CommentService {
                 () -> new IllegalArgumentException("There is nobody by that name.")
         );
 
+        //코멘트를 삭제하려는 유저와, 코멘트를 작성한 유저가 일치하는지
         if (!comment.getUser().getId().equals(user.getId())) {
             //아 어떤 예외처리로 해야 하는 걸까? 이렇게 말고 예외 쓰고 싶은데
             return null;

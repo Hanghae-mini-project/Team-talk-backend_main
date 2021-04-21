@@ -61,42 +61,69 @@ public class BoardService {
     //create board (login)
     //이미 파라미터로 받은 User 에 데이터가 없으면 principal. 점 찍는 순간 null pointer exception 터져버림
     public void createBoard(BoardRequestDto requestDto, User principal) {
-        if (principal == null) {
-            //500에러 말고 예외처리를 좀 하고 싶은데..어떻게 하지? -> 전혀 안먹히네
-            new IllegalArgumentException("There is nobody by that name.");
-        }
+        //로그인을 해야 board 생성이 되는데, 이런 일이 일어날까?
+        com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername()).orElseThrow(
+                () -> new IllegalArgumentException("There is nobody by that name.")
+        );    //왜 안돼지???? 왜 의존성예외가 터지지
 
-        String username = principal.getUsername();
-        com.backend.teamtalk.domain.User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("nobody")
-        );
+//        if (principal == null) {    //수정 해야 해
+//            //500에러 말고 예외처리를 좀 하고 싶은데..어떻게 하지? -> 전혀 안먹히네
+//            //내 에러가 안 터지고, 핸들러 에러 401로 간다.
+//            new IllegalArgumentException("There is nobody by that name.");
+//        }
+//
+//        String username = principal.getUsername();
+//        com.backend.teamtalk.domain.User user = userRepository.findByUsername(username).orElseThrow(
+//                () -> new IllegalArgumentException("nobody")
+//        );
 
         Board board = new Board(requestDto, user);
         boardRepository.save(board);
     }
 
-//    public void createBoard(BoardRequestDto requestDto, Long user_id) {
-//        User user = userRepository.findById(user_id)
-//                .orElseThrow(() -> new IllegalArgumentException("nobody"));
-//
-//        Board board = new Board(requestDto, user);
-//        boardRepository.save(board);
-//    }
-
+    /**
+     * 글 작성자 == 글 수정자
+     * return 아무거나 해도 될듯
+     * @param board_id
+     * @param requestDto
+     * @param principal
+     */
     //update board
     @Transactional
-    public void updateBoard(Long board_id, BoardRequestDto requestDto) {
+    public Board updateBoard(Long board_id, BoardRequestDto requestDto, User principal) {
         Board board = boardRepository.findById(board_id)
-                .orElseThrow(IllegalArgumentException::new);
-        board.update(requestDto);
+                .orElseThrow(IllegalArgumentException::new);    //3번 보드
+
+        com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername()).orElseThrow(
+                () -> new IllegalArgumentException("There is nobody by that name.")
+        );
+
+        if (!board.getUser().getId().equals(user.getId())) {
+            return null;    //null 말고 다른 거 하고 싶은데
+        } else {
+            board.update(requestDto);
+        }
+        return board;
+
     }
 
     //delete board
-    public void deleteBoard(Long board_id) {
-        boardRepository.findById(board_id).orElseThrow(
+    public Board deleteBoard(Long board_id, User principal) {
+        Board board = boardRepository.findById(board_id).orElseThrow(
                 () -> new IllegalArgumentException("There is no bulletin board.")
         );
-        boardRepository.deleteById(board_id);
+
+        com.backend.teamtalk.domain.User user = userRepository.findByUsername(principal.getUsername()).orElseThrow(
+                () -> new IllegalArgumentException("There is nobody by that name.")
+        );
+        //반복 코드 메서드로 빼도 될 듯
+
+        if (!board.getUser().getId().equals(user.getId())) {
+            return null;    //null 말고 다른 거 하고 싶은데
+        } else {
+            boardRepository.deleteById(board_id);
+        }
+        return board;
     }
 
 
