@@ -11,11 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,15 +25,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /*
+     * 인자에 final 붙은 것 유의. final 인자는 메서드 안에서 변경 할 수 없음
+     */
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String username) {  //파라미터에 final
+    public UserDetails loadUserByUsername(final String username) {
         return userRepository.findOneWithAuthoritiesByUsername(username)
                 .map(user -> createUser(username, user))
                 .orElseThrow(() -> new UsernameNotFoundException(username + " -> cannot find username."));
     }
 
-    //User 조심 (User 생성은 spring, 파라미터는 나의 클래스)
+    //유의: User (반환타입: spring User, 인자: 내가 만든 User 클래스)
     private org.springframework.security.core.userdetails.User createUser(String username, User user) {
         if (!user.isActivated()) { //user 가 활성화 상탠지 체크
             throw new RuntimeException(username + " -> 활성화되어 있지 않습니다.");

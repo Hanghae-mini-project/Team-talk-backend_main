@@ -9,43 +9,42 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 @RequiredArgsConstructor
 @RestController
 public class BoardController {
 
-    private final BoardRepository boardRepository;
     private final BoardService boardService;
 
 
-    //get all boards
-//    @GetMapping("/api")
-//    public List<Board> getAllBoards() {
-//        List<Board> allBoards = boardRepository.findAll();  //수정,삭제가 빈번하다면 list는 효율이...
-//
-//        return allBoards;
-//    }
+    /*
+     * 실수: 순환참조 문제 -> 수정 완료.
+     * 로그인 한 회원의 보드를 가져오는 메서드.
+     * 프론트에서 필요한 데이터: user id, user skill, board id, board title.
+     * board 에 관한 정보는 2개만 있으면 되므로 board 객체를 넘길 때 board 의 comments 는 ignore 처리 해놓음.
+     */
 
-    //get all boards (순환참조 막기)  --> Success
-    //로그인 한 회원의 보드 가져오기 -> 사실 보드 타이틀, 아이디만 있으면 되기 때문에 board 에서 comment 는 ignore 처리 해놨음
-    @GetMapping("/main/{username}")     //개발자를 위한 api
+    //get all boards (로그인 후 보이게 되는 메인 화면)
+    @GetMapping("/main/{username}")
     public Map<String, Object> getAllBoards(@PathVariable String username) {
         Map<String, Object> userInfo = boardService.getAllBoards(username);
         return userInfo;
     }
-    
-    
+
+    /*
+     * 특정 board 를 클릭하면 보이는 화면
+     * teamtalk board 의 특성 상 특정 board 를 클릭했을 때
+     * board 안에 속한 pin 들, pin 안에 속한 card 들까지 전부 보여줘야 함.
+     * card 는 title 만 보여주고, card 안에 속한 description 과 comments 들은 숨김.
+     */
 
     //get one board
-    @GetMapping("/api/boards/{board_id}") //{board_id}
+    @GetMapping("/api/boards/{board_id}")
     public Board getOneBoard(@PathVariable Long board_id) {
         return boardService.getOneBoard(board_id);
     }
-
 
     //create boards (login)
     @PostMapping("/api/boards")
@@ -54,7 +53,6 @@ public class BoardController {
         return "create board: success.";
     }
 
-
     //update board (title)
     @PutMapping("/api/boards/{board_id}")
     public String updateBoard(@PathVariable Long board_id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal User principal) {
@@ -62,6 +60,7 @@ public class BoardController {
         return "update board: success.";
     }
 
+    //delete board
     @DeleteMapping("api/boards/{board_id}")
     public String deleteBoard(@PathVariable Long board_id, @AuthenticationPrincipal User principal) {
         boardService.deleteBoard(board_id, principal);

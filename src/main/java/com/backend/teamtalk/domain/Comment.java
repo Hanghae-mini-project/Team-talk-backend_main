@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Getter //user 빼가야 해 서비스에서 확인
+@Getter //user 를 get 해야 하므로 사용. service 에서 확인 가능
 @NoArgsConstructor
 @Entity
 public class Comment {
@@ -18,7 +18,7 @@ public class Comment {
 
     private String comment;
 
-    @JsonBackReference  //참조를 막고
+    @JsonBackReference
     @ManyToOne
     private User user;
 
@@ -26,12 +26,14 @@ public class Comment {
     @ManyToOne
     private Card card;
 
+    //create comment
     public Comment(CommentRequestDto requestDto, Card card, User user) {
         this.comment = requestDto.getComment();
         this.card = card;
         this.user = user;
     }
 
+    //update comment
     public void update(CommentRequestDto requestDto, User user, Card card) {
         this.comment = requestDto.getComment();
         this.user = user;

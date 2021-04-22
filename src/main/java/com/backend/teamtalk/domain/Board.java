@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-                    property = "id")   //무한순환 테스트 중 (, property = "id")
+                    property = "id")
 public class Board {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,24 +26,25 @@ public class Board {
     @Column
     private String title;
 
-    //db 컬럼 user_id 로만 남기고 싶은데...
-    @ManyToOne //db column. 로그인 후 보게 될 user별 board  //(fetch = FetchType.LAZY)
+
+    @ManyToOne
     @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     @JsonManagedReference
-    private List<Pin> pins = new ArrayList<>(); //무슨 차이?
+    private List<Pin> pins = new ArrayList<>();
 
 
     //constructor
-    //create board -> 인자에 추후 user 추가
+    //create board
     public Board(BoardRequestDto boardRequestDto, User user) {
         this.title = boardRequestDto.getTitle();
         this.user = user;
 
     }
 
+    //임시로 남겨둠
     public Board(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
 

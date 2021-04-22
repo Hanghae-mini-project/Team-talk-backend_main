@@ -32,61 +32,48 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-//    @Override
-//    public void configure(WebSecurity web) {
-//        web.ignoring()  //무시하고 넘겨줘라.
-//                .antMatchers(
-//                        "/h2-console/**"    //test용
-//                        ,"/favicon.ico"
-//                        ,"/error"
-//                );
-//    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.headers().frameOptions().sameOrigin(); //x-frame-options 동일 출처일경우만
-        http.authorizeRequests() .antMatchers("/h2/**").permitAll(); //h2 URI에 대한 권한 허가
-        http.csrf().disable(); //CSRF Token 비활성화
+        /*
+         * H2 Console 은 iframe 을 사용하기 때문에 Header 의 X-Frame-Options 를 비활성화 해야 함 (.disable())
+         * 하지만 무작정 disable 처리 하는 것보다 X-Frame-Options 동일 출처일 경우만 허용하도록 설정.
+         * h2-console 을 사용해야 하니  permitAll 설정을 해주고 csrf Token 은 비활성화 설정.
+         */
+        http.headers().frameOptions().sameOrigin();
+        http.authorizeRequests() .antMatchers("/h2/**").permitAll();
+        http.csrf().disable();
 
         http
-                //jwt 토큰 사용하니까 csrf 보안 토큰은 disable
-//                .csrf().disable()
-
-                //exception handling 할 때는 내가 만든 걸 쓸 거니까 2 개 추가 해주고
+                //exception handling 할 때는 내가 만든 클래스를 쓸 거니까 2개 설정.
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
-                // h2-console 사용
-//                .and()
-//                .headers()
-//                .frameOptions()
-////                .sameOrigin()
-//                .disable()
-
-
-                //jwt 인증이므로 세션은 사용하지 않는다.
+                //jwt 인증이므로 세션은 사용하지 않음.
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
+
                 .and()
-                //요청에 대한 접근 권한 설정
+                /*
+                 * 요청에 대한 접근 권한 설정
+                 * 로그인, 회원가입은 누구에게나 허용해줘야 하니 permitAll 설정
+                 * 실수: api 의 method 설정을 안해줘서 오류 찾는 데 시간을 많이 소요 함.
+                 */
                 .authorizeRequests()
-                //로그인, 회원가입은 토큰이 없는 상태에서 들어오는 요청이니까 열어줘야 한다
-                //method 지정 안해줘서.... 하루 날렸네
                 .antMatchers(HttpMethod.POST, "/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
 
-                //test용
-                .antMatchers("/api/users").permitAll()  //테스트용. 모든 사람에게 오픈
-                .antMatchers("/h2-console/**").permitAll()
+                //테스트 할 때 편하게 확인 하기 위해 설정해놓은 것.
+                .antMatchers("/api/users").permitAll()
+//                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers(HttpMethod.DELETE,"/api/users/{user_id}").permitAll()
-                .antMatchers("/api").permitAll()
+//                .antMatchers("/api").permitAll()
 
-                //test:
-                //로그인 한 회원의 보드, 핀, 카드 읽기 (get 요청), 추가: 코멘트
+
+                //로그인 한 회원의 board, pin, card, comment 읽기 [get 요청]
                 .antMatchers("/main/{username}").permitAll()
                 .antMatchers("/api/boards/{board_id}").permitAll()
                 .antMatchers("/api/pins/{pin_id}").permitAll()
@@ -95,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/cards/{card_id}").permitAll()
                 .antMatchers("/api/cards/{card_id}/comments").permitAll()
 
-                //board 생성, 수정, 삭제 : 회원만 (우선은)
+                //board 생성, 수정, 삭제 : 회원만
                 .antMatchers(HttpMethod.POST, "/api/boards").hasRole("USER")
                 .antMatchers(HttpMethod.PUT, "/api/boards/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/api/boards/**").hasRole("USER")
@@ -116,10 +103,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/cards/{card_id}/comments/{comment_id}").hasRole("USER")
 
 
-
-                .anyRequest().hasRole("ADMIN")   //이렇게 설정하는 게 아닌가? 안먹히는데 -> 맞고
+                .anyRequest().hasRole("ADMIN")
 
                 .and()
+                /*
+                 * UsernamePasswordAuthenticationFilter 가 작동 되기 전에
+                 * 내가 custom 한 JwtAuthenticationFilter 가 먼저 작동 되도록 addFilterBefore 에 설정했던
+                 * JwtSecurityConfig 클래스 적용
+                 */
                 .apply(new JwtSecurityConfig(jwtTokenProvider));
     }
 

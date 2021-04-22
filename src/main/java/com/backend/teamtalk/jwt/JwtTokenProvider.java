@@ -3,7 +3,6 @@ package com.backend.teamtalk.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,36 +11,28 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * 토큰을 생성하고 검증하는 컴포넌트
+ * 인증 작업을 진행하는 Filter 에서 실제 이 컴포넌트를 이용.
+ */
+
 @Slf4j
 @Component
-public class JwtTokenProvider implements InitializingBean {     //토큰을 생성하고 검증하는 컴포넌트 | 실제 이 컴포넌트를 이용하는 것은 인증 작업을 진행하는 Filter
+public class JwtTokenProvider implements InitializingBean {
 
-    //secret key test -> F
-//    private final ConfigUtil configUtil;
-//    private String secretKey = configUtil.getProperty("key");
 
-    //왜 설정?
-    private static final String AUTHORITIES_KEY = "auth";
+    private static final String AUTHORITIES_KEY = "auth";   //*****
 
     private final String secret;
     private final long tokenValidityInMilliseconds;
-//    private final UserDetailsService userDetailsService;
 
-    //security 에 있는 거
+    //security 에 있는 key
     private Key key;
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
@@ -59,7 +50,9 @@ public class JwtTokenProvider implements InitializingBean {     //토큰을 생�
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //create token | 로그인 요청한 유저가 유효한 녀석이면 ok 하면서 토큰 만들어서 내려주기
+    /*
+     * 로그인 요청한 유저가 유효한 user 면 ok 하면서 토큰 만들어서 내려줌
+     */
     public String createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -76,7 +69,7 @@ public class JwtTokenProvider implements InitializingBean {     //토큰을 생�
                 .compact();
     }
 
-    //토큰을 파라미터로 받아서 토큰에 있는 정보를 이용해서 Authentication 객체를 리턴하자.
+    //토큰을 인자로 받아서 토큰에 있는 정보를 이용해서 Authentication 객체를 리턴하자.
     public Authentication getAuthentication(String token) {
         //token 을 이용해서 claims 를 만들어 주자.
         Claims claims = Jwts
@@ -86,7 +79,7 @@ public class JwtTokenProvider implements InitializingBean {     //토큰을 생�
                 .parseClaimsJws(token)
                 .getBody();
 
-        //username, roles 만 나왔던 거랑 어떻게 다른지?
+        //username, roles 만 나왔던 거랑 어떻게 다른지 확인하기 위해 log 찍음
         log.info("claims = {}", claims);
 
         Collection<? extends GrantedAuthority> authorities =

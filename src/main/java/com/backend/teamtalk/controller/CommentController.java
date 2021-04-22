@@ -1,22 +1,17 @@
 package com.backend.teamtalk.controller;
 
-import com.backend.teamtalk.domain.Comment;
 import com.backend.teamtalk.dto.CommentRequestDto;
 import com.backend.teamtalk.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
 public class CommentController {
-    //comment 생성, 수정, 삭제
 
     private final CommentService commentService;
 
@@ -30,16 +25,15 @@ public class CommentController {
         return "create comment: success";
     }
 
-    //comment written by user (내가 쓴 댓글)
+    //get comments (특정 카드에 달려있는 comments 가져오기)
     @GetMapping("/cards/{card_id}/comments")
-    public Map<String, Object> ReadComments(@PathVariable Long card_id,
+    public Map<String, Object> readComments(@PathVariable Long card_id,
                                             @AuthenticationPrincipal User principal) {
         return commentService.readComments(card_id, principal);
     }
 
-    //특정 카드에 달려있는 모든 코멘트 조회(인자에 유저 정보 없이)
 
-    //update comment -> 누구나 다 조회 가능한 코멘트.
+    //update comment
     @PutMapping("/cards/{card_id}/comments/{comment_id}")
     public String updateComment(@PathVariable Long card_id,
                                 @PathVariable Long comment_id,

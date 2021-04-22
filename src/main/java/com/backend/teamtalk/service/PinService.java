@@ -7,7 +7,6 @@ import com.backend.teamtalk.repository.BoardRepository;
 import com.backend.teamtalk.repository.PinRepository;
 import com.backend.teamtalk.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,12 @@ public class PinService {
     private final UserRepository userRepository;
 
 
-    //로그인 하지 않은 사람이 url 로 쳐서 직접 들어올 수 있을까?
+    /*
+     * 의문: 로그인 하지 않은 사용자가 url 에 직접 주소를 쳐서 들어올 수 있을까?
+     * 확장 가능성: user 초대 기능을 만든다면, board 내에서 pin, card 는 여러 사람이 생성 가능하기 때문에 user id 가 필요할 것 같음.
+     * (comment 는 처음부터 user id 를 참조하고 있음)
+     */
+
     //create pin
     public void createPin(Long board_id, PinRequestDto requestDto, User principal) {
         //user 호출
@@ -40,7 +44,6 @@ public class PinService {
         pinRepository.save(pin);
 
     }
-
 
 
     //get one pin.

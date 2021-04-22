@@ -23,8 +23,8 @@ public class SignupRequestDto {
     @NotNull
     private String password;
 
-//    @NotNull
-//    private String passwordCheck;   //형원님과 변수명 맞추기
-
+    /*
+     * 선택하지 않을 시 기본 사진
+     */
     private String skill;
 }

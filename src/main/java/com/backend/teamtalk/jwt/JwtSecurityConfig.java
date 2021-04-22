@@ -1,14 +1,18 @@
 package com.backend.teamtalk.jwt;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//내가 만든 JwtTokenProvider 와 JwtFilter 를 Security 에 적용해야 하는데 이를 위해 JwtSecurityConfig 를 만든다. -> 왜 일 처리를 두 번 하는 거 같지?
+/*
+ * 내가 만든 JwtTokenProvider 와 JwtAuthenticationFilter 를 WebSecurityConfig 에 등록해야 함.
+ * 이를 위해 JwtSecurityConfig 를 만듦.
+ *
+ * WebSecurityConfig 에 바로 등록해도 되지만, Jwt 만 따로 있는 패키지에서 개별 설정 해줌.
+ */
+
 @NoArgsConstructor
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
@@ -18,10 +22,16 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    /*
+     * UsernamePasswordAuthenticationFilter 가 작동 되기 전에
+     * 내가 custom 한 JwtAuthenticationFilter 가 먼저 작동 되도록
+     *
+     *  request 요청이 왔을 떄, intercept 해서 내가 만든 filter 가 처리 할 수 있도록
+     */
+
     @Override
-    public void configure(HttpSecurity http) {  //언제 실행되는 거지?
+    public void configure(HttpSecurity http) {
         JwtAuthenticationFilter customFilter = new JwtAuthenticationFilter(jwtTokenProvider);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
-        //security config 에서 한번에 해도 되는데 jwt 만 따로 있는 패키지에서 설정
     }
 }

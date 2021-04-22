@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @Getter @Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-                    property = "id")   //무한순환 테스트 중 (, property = "id")
+                    property = "id")
 public class Pin {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +31,7 @@ public class Pin {
     private List<Card> cards;
 
     @ManyToOne
-    @JsonBackReference  //특정 핀 조회에 보드 아이디 반영
+    @JsonBackReference
     private Board board;
 
 
