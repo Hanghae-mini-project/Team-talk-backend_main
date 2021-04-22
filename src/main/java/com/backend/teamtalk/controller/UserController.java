@@ -98,7 +98,7 @@ public class UserController {
     }
 
     //delete user
-    @DeleteMapping("api/users/{user_id}")
+    @DeleteMapping("/api/users/{user_id}")
     public String deleteUser(@PathVariable Long user_id) {
         //user 찾아와야 하는데 귀찮으니까 일단 삭제
         userRepository.deleteById(user_id);
