@@ -50,18 +50,18 @@
 
 ## 도메인 분석 설계
 
-`signup | login`
+`signup | login`<br> 
 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbenUzq%2Fbtq3hVaBiJ6%2FkFSFO2zaSmWkoVx8kYeoUk%2Fimg.png)
 
 <br>  
 
-`board | pin | card`
+`board | pin | card`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FciDfeO%2Fbtq3czGPsCn%2F4Zbjd87gZuasoYjHNR0HPK%2Fimg.png)
 
 <br>  
 
-`card detail`
+`card detail`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdQQTqK%2Fbtq3czNC4n6%2Fk5vs89mYJC96rMIXjrpgAK%2Fimg.png)
 
 <br>  
@@ -110,31 +110,31 @@
 
 ## API 
 
-`User`
+`User`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FtiI0t%2Fbtq3i9M153T%2Fiiion0Lk9jMzN8PGR0hl51%2Fimg.png)
 
 
 <br>
 
-`Board`
+`Board`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FboMElU%2Fbtq3hoxnfhD%2F1ZdFP2BEdVVnK9aseh74g0%2Fimg.png)
 
 
 <br>
 
-`Pin`
+`Pin`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fy2IRx%2Fbtq3haF7vQX%2FMjpBpNZ5wKZkyFVjKJOglK%2Fimg.png)
 
 
 <br>
 
-`Card`
+`Card`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fuh5tv%2Fbtq3hoEauRc%2F6pfLQi0D0i5AeBvFMLejik%2Fimg.png)
 
 
 <br>
 
-`Comment`
+`Comment`<br> 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fb6TyPG%2Fbtq3dQBrcss%2FkRDpT3rJxoUmzyrZMQZj6k%2Fimg.png)
 
 
